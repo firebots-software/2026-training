@@ -37,7 +37,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   // turnAmount is in radians
-  public void setTurnAmount(double turnAmount) {
+  public void setTargetTurnAmount(double turnAmount) {
     targetTurnAmount = turnAmount;
     motor.setControl(positionRequest.withPosition(turnAmount * rotationsPerArmRadian));
   }
@@ -46,16 +46,20 @@ public class ArmSubsystem extends SubsystemBase {
     return motor.getRotorPosition().getValueAsDouble() / rotationsPerArmRadian;
   }
 
+  public double getTargetTurnAmount() {
+    return targetTurnAmount;
+  }
+
   // Sets the encoder to read 0
   public void zeroEncoder() {
     motor.setPosition(0.0);
   }
 
-  public boolean isAtTargetHeight(double toleranceMeters) {
+  public boolean isAtTargetTurnAmount(double toleranceMeters) {
     return Math.abs(getTurnAmount() - targetTurnAmount) <= toleranceMeters;
   }
 
   public void stop() {
-    setTurnAmount(getTurnAmount());
+    setTargetTurnAmount(getTurnAmount());
   }
 }
