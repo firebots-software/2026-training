@@ -6,7 +6,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ArmSubsystem2 extends SubsystemBase {
+public class ArmSubsystem extends SubsystemBase {
 
   private static final double kRotationsPerRadian = 10.0; // 5 rotations (0.5 radians) * 2
 
@@ -14,7 +14,7 @@ public class ArmSubsystem2 extends SubsystemBase {
   private double targetPos;
   private final PositionVoltage positionRequest;
 
-  public ArmSubsystem2() {
+  public ArmSubsystem() {
     motor = new TalonFX(1);
 
     Slot0Configs slot0 = new Slot0Configs();
