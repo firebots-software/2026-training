@@ -1,0 +1,9 @@
+> The CommandScheduler runs every 20ms and it runs the periodic() method of each registered Subsystem.
+
+> Do not run motors in the periodic method because the periodic method runs always
+
+> The default command of a subsystem are run when nothing else is happening
+
+> The periodic() method should be used for checking and logging rather than moving motors
+
+> Subsystems should represent a piece of robot hardware and its most basic controls
