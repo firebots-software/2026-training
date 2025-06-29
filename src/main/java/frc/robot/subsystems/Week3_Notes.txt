@@ -1,0 +1,31 @@
+Command Scheduler
+CommandScheduler runs every 20 ms(50 times per second) and manages all robot commands by:
+Checking button inputs, scheduling new commands, running active command code, ending completed/interrupted commands, and calling periodic() on each registered subsystem
+
+Subsystems
+They represent the physical parts of the robot like the arm or elevator
+They encapsulate hardware to keep its access organized
+It only allows access through public methods
+They prevent duplicate code and simplify changes
+Subsystems help manage hardware, allow organized command scheduling(only one command per subsystem at a time), and can have default commands to run
+
+How to Create a Subsystem
+Subsystems are classes that extend SubsystemBase
+Motors and sensors should be defined at the top of the class as private final variable
+These variables represent actual hardware and the hardware is initialized in the constructor using the port number
+Subsystems shoud give public public methods to interact with the hardware
+Other parts of the code should only interact with hardware through only the subsystem's methods
+
+Periodic Method
+Runs every 20ms
+Used for logging values and basic housekeeping/updating basic values
+Can be left blank(optional). It is empty by default and you can choose to override the empty implementation
+DON"T CONTROL MOTORS HERE
+
+Requirements & Default commands
+Only one command can control a subsystem at a time
+A command requires a subsystem if it controls that subsystem
+The periodic method always runs no matter what, hence why it does not control the motors
+The Default Command runs when no other command is using the subsystem
+Used to guarantee some behavior like keeping the arm in rest position
+It isn't set up in the subsystem class, but done elsewhere in the code
