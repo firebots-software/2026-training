@@ -1,0 +1,10 @@
+- da command scheduler runs every 20ms
+- da command scheduler runs da periodic() of each subsystem
+- subsystems act as an encapsulation
+- da scheduler will never 2 commands that use the same subsystem
+- subsystem default commands for when they aren't in use
+- motors and sensors are defined as private final
+- periodic() usually logs values
+- don't control motors in periodic() bc obvi reasons
+- requirement: when the command requires a subsystem
+- 
