@@ -1,0 +1,11 @@
+A subsystem a group of code for a multiple pieces of hardware that work together
+It is important to restrict access to a subsystem to prevent problems
+It is easy to use subsystems using CommandSchedular
+Subsystems are for controlling basic functions. Commands put this together to do more complicated things
+All subsystems have a lot of basic things in common so its good to put them all in a parent class
+Whenever doing an action on a piece of hardware, always do it through the subsystem that contains it
+
+Periodic() method is what the code runs periodically every cycle. This is for housekeeping tasks. The method is optional.
+Never control motors from the periodic method.
+
+Subsystems only do one thing at a time.
