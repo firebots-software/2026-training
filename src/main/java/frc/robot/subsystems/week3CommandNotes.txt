@@ -1,0 +1,48 @@
+Command Scheduler: 
+- class responsible -> run commands 
+- schedules commands accordingly
+- runs periodic method for each subsystem 
+
+Subsystems
+- robot organization based off of code
+- abstraction of robot hardware -> work together 
+- restricting access
+    - single place for code
+    - access through public methods 
+    - specifc details easily added
+- backbond of CommandScheduler's resource organization
+- associated with default commands  
+- basic functionality
+    - ex: mechanisms, movement 
+
+How to create 
+- abstract class systembase
+    - need wpilib
+    - parent class -> easily add components + behaviors 
+- elevator subsystem 
+    - must be defined
+    - associated with hardware
+- motors + sensors defined through private and final modifiers 
+- 1:1 correspondence / partnership
+- hardware is ALWAYS intialized 
+    - with port #
+- methods 
+    - made + get values
+    - periodic method 
+    - default comamnds 
+
+periodic()
+- every 20ms
+- OPTIONAL
+- not CONTROLLING motors 
+
+Requirement & Default command: 
+- 1:1 correspondance between subsystem code + on robot
+- ex: one instance of arm subsystem : one arm
+- complete one command at a time
+- period() method   
+    - no move motor
+    - always runs
+    - actions to commands
+- no intervention
+    - subsystem doesnt do anything
