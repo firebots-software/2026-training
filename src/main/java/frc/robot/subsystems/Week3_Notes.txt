@@ -1,0 +1,31 @@
+Command Scheduler:
+Runs commands ever 20 ms
+Contains a scheduler that registers the buttons pressed/commands needing to be ran, and runs them accordingly
+Once a command is run, the scheduler ends the command
+Runs periodic() method in each Subsystem
+
+Subsystems:
+Abstraction for a collection of robot hardware that operates as one
+Most methods private so methods can be replicated safely in other Subsystems
+CommandScheduler never schedules a command that comes from the same subsystem--either interrupts current command or is ignored
+Default commands-automatically scheduled when no other command is running
+Take care of basic functionality
+
+Creating Subsystems:
+extends SubsystemBase, holds common methods that are useful for each subsystem
+one variable for each piece for hardware
+motors and sensors defined at top--private and final
+initialize hardware in constructor
+if you need to access values, use getters & setters
+
+Periodic method:
+Called every 20 ms
+usually logs/getters for values
+updates basic values/basic tasks
+dont control motors
+
+Requirements and default commands:
+Only one method per subsystem at any given time
+periodic always runs, so if method that moves motors is ran and the robot is in a bad circumstance, it is bad
+since motor commmands cant be called in periodic, they are called in "Default Command"
+default command--gaurantees behavior if input
