@@ -1,62 +1,60 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.PositionOut;
+
+// This is heavily based on gh/firebots-software/ExampleElevatorSubsystem as linked in the assignment doc
 
 public class ArmSubsystem extends SubsystemBase {
-  private final TalonFX motor;
-  private double targetRadians;
-
-  private final PositionVoltage positionRequest;
-
-  public ArmSubsystem() {
-    targetRadians = (3.14 / 2d);
-
-    motor = new TalonFX(1);
-    Slot0Configs slot0 = new Slot0Configs();
-    slot0.kP = Constants.ArmConstants.kP;
-    slot0.kI = Constants.ArmConstants.kI;
-    slot0.kD = Constants.ArmConstants.kD;
-    motor.getConfigurator().apply(slot0);
-
-    positionRequest = new PositionVoltage(0).withSlot(0);
-  }
-
-  public void setAngle(double armRadians) {
-    targetRadians = armRadians;
-  }
-
-  public double getAngle() {
-    return motor.getRotorPosition().getValueAsDouble() / Constants.ArmConstants.rotationsPerRadian;
-  }
-
-  public void zeroEncoder() {
-    motor.setPosition(0.0);
-  }
-
-  public boolean isAtTargetAngle(double toleranceRadians) {
-    return Math.abs(getAngle() - targetRadians) <= toleranceRadians;
-  }
-
-  public void stop() {
-    setAngle(getAngle());
-  }
-
-  @Override
-  public void periodic() {
-    motor.setControl(positionRequest.withPosition(targetRadians * Constants.ArmConstants.rotationsPerRadian));
-    // This method will be called once per scheduler run
-  }
-
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
+	// given that 5 rotations is .5 radians
+	private static final double rotationsPerRadian = 10;
+	
+	private final TalonFX motor;
+	private double targetAngle;
+	
+	// these would have to be initialized properly
+	private double minAngle;
+	private double maxAngle;
+	
+	public ArmSubsystem() {
+		// necessary hardware: 1 motor
+		motor = new TalonFX(1);
+	}
+	
+	// move arm to the input angle
+	public void setAngle (double targetInputRadians) {	
+	
+		// clamp the input value to valid movement only
+		targetInputRadians = Math.max(minAngle, Math.min(maxAngle, targetInputRadians));
+		
+		targetAngle = targetInputRadians;
+		
+		motor.setControl(new PositionOut(targetInputRadians * rotationsPerRadian));
+	}
+	
+	// can return either the raw encoder value or the angle in radians. If we know what option we will be using we can remove the option for a raw value and just return that.
+	public double getCurrentAngle(boolean rawValue) {
+		if (rawValue) {
+			return motor.getRotorPosition().getValue();
+		} else {
+			return motor.getRotorPosition().getValue() / rotationsPerRadian;
+		}
+	}
+	
+	public double getCurrentAngle() {
+		return getCurrentAngle(false);
+	}
+	
+	public void zeroEncoder() {
+		motor.getRotorPosition().set(0.0);
+	}
+	
+	public boolean isAtTarget(double toleranceRadians) {
+		return Math.abs(getCurrentAngle() - targetAngle) <= toleranceRadians;
+	}
+	
+	public void stop() {
+		setAngle(getCurrentAngle());
+	}
 }
