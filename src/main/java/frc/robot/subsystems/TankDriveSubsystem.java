@@ -29,7 +29,7 @@ public class TankDriveSubsystem {
         TalonFXConfigurator lMotorConfigurator = lMotor.getConfigurator();
         TalonFXConfigurator rMotorConfigurator = rMotor.getConfigurator();
 
-        CurrentLimitsConfigs cl = new CurrentLimitsConfigs().withSupplyCurrentLimit(6); //etc
+        CurrentLimitsConfigs cl = new CurrentLimitsConfigs().withSupplyCurrentLimit(6).withStatorCurrentLimit(6); //etc
 
         lMotorConfigurator.apply(cl);
         rMotorConfigurator.apply(cl);
@@ -37,14 +37,14 @@ public class TankDriveSubsystem {
 
     private void move(String input, float speed) {
         if (input.equals("clockwise")) {
-            lMotor.set(speed); //conveniently enough the talonfx class has a thing where you dont need a request (it does it for you)
+            setLMotorSpeed(speed); //conveniently enough the talonfx class has a thing where you dont need a request (it does it for you)
         }
         if (input.equals("counterclockwise")) {
-            rMotor.set(speed);
+            setRMotorSpeed(speed);
         }
         if (input.equals("forward")) {
-            lMotor.set(speed);
-            rMotor.set(speed);
+            setLMotorSpeed(speed);
+            setRMotorSpeed(speed);
         }
     }
 
@@ -66,5 +66,13 @@ public class TankDriveSubsystem {
 
     public void brake() {
         move("forward", 0);
+    }
+
+    public void setLMotorSpeed(float speed) {
+        lMotor.set(speed);
+    }
+
+    public void setRMotorSpeed(float speed) {
+        rMotor.set(speed);
     }
 }
