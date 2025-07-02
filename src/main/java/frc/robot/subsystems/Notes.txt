@@ -1,0 +1,26 @@
+- Command Scheduler runs commands.
+- Every 20ms it polls buttons, schedules commands, runs command bodies, and ends finished and interrupted commands
+- subsystems more or less directly control hardware
+- a subsystem encapsulates a bunch of hardware and groups it into a file called subsystem and restricts access to the hardware
+- single location for the hardware code to prevent duplicates
+- additionally allows command scheduler to use one subsystem at a time and not attempt to do multiple things at the same time
+- subsystems are the most basic level of the codebase
+- to create a subsytem you:
+    - make a new file
+    - make a class that extends SubsystemBase
+    - Each piece of hardware should correspond to a variable in code
+    - motors and sensors are usually define with private and final right before it
+        - each piece of hardware is associated with a port number
+    - make getter and setter methods for appropriate variables
+    - make methods that is personalized for your needs
+- periodic() is called every 20ms
+- put whatever you want
+    - a good ex. would be logging methods (isAtTarget, targetAngle, targetHeight, drake)
+- do not control motors in periodic()
+- there should be a 1-1 between subsystem on a robot and in code
+- each subsystem can only be doing one thing at a time
+- it is important that periodic() doesn't run any motors because periodic() runs all the time no matter what
+- when a command controls a subystem it "requires" it
+- with no command controlling a subsystem, it does nothing other than what is in periodic() so we can set up a default command
+  somewhere else in code to gaurantee behavior
+    - ex. arm subsystem automatically goes to rest
