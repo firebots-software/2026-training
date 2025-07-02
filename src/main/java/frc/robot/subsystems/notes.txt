@@ -1,0 +1,51 @@
+Command Scheduler
+- runs commands
+- one iteration per 20ms
+- Each iteration:
+    - polls all registered buttons
+    - schedules commands for execution accordingly
+    - runs all scheduled commands
+    - ends commands that have finished or were interrupted
+- Short definition: runs and organizes all actions you tell the robot to do based on the joysticks, every 20 ms
+
+What are Subsystems?
+- basic unit of robot organization (command-based)
+- robot hardware that operates together as a unit
+- in code, subsystems "hide" this hardware from rest of code and restrict access to it except through public methods
+- prevents duplicate code like scaling motor outputs
+
+- backbone of CommandScheduler's resource management subsystems
+- commands specify which subsystems they interact with, thus declaring resource requirements
+- Command Scheduler will never schedule two commands that require the same subsystem
+- attempting to schedule a command that requires a subsystem that's already in use will interrupt currently-running command, or be ignored
+
+- subsystems have "default commands" that are automatically scheduled when no other command is using the subsystem
+- "background actions," like holding arm at a set position, or stopping motor when not in use
+
+- subsystems take care of basic functionalities: moving mechanisms, checking for conditions, getting and setting values
+- commands take these basic methods and put them together to accomplish a task on the robot
+
+How to Create a Subsystem?
+- extend from SubsystemBase abstract class
+- one private final variable per hardware component (motor, sensor, etc)
+- these hardware components should only be accessed through subsystem methods
+- hardware is initialized in subsystem's constructor, with its associated port number
+- getter and setter methods are created
+- from SubsystemBase, there's the periodic() method, default command, etc.
+
+periodic()
+- called every cycle (20ms)
+- used to log values like targetArmPosition, isAtTarget, or motorSpeed
+- used for basic housekeeping tasks and uupdating basic values in a subsystem
+- optional to include
+- do NOT control motors in periodic()
+
+Requirement & Default Command
+- subsystem instances must correspond 1-to-1 with robot's physical subsystems
+    - (only 1 Arm Subsystem instance in code if robot has 1 Arm)
+- also, each subsystem should only be able to complete one Command (full action) at a time
+- periodic() can't move motors, because that function always runs, no matter what command is running. we leave these actions to commands.
+- each command that controls a specific subsystem "requires" that subsystem.
+- when no command requires a subsystem, it does nothing (other than periodic()). Alternatively, we can set up a "Default Command" somewhere else in the code to preset some behavior.
+- for an arm subsystem, the default command is usually to go to a resting position to allow driver to maneuver optimally.
+- the default command isn't defined in the subsystem body. it's usually done elsewhere in the code.
