@@ -1,0 +1,34 @@
+# Command Scheduler
+- runs commands, polls buttons (inputs?), lines up commands to be executed every 20ms
+- organizes all the actions and inputs.
+
+# Subsystems
+- organize robot hardware that operates together (eg arm, elevator)
+- restrict access except through public methods
+- simpler actions like triggering a solenoid don't need to be exposed,
+instead we can use higher level functions like close/open arm
+- restricting access prevents duplication of code
+- Commands using CommandScheduler can specify which subsystems they use,
+the scheduler will only run one command at a time using a specific subsystems
+- default commands are scheduled when the subsystem is not in use (background tasks)
+- subsystems = basic functionality, commands = taking basic actions and putting them together
+
+# Creating a subsystem
+- subsystems share components and behaviours, so a parent class is useful
+- Each hardware piece should be one variable in the code
+- To access these variables, a function of the class should be called
+- harware pieces are associated with port numbers
+
+# periodic()
+- SubsystemBase gives access to periodic()
+- called every cycle, put anything that needs to be executed periodically
+- eg, log values, updating basic values
+- periodic() is optional
+
+# Requirement and Default Command
+- Only one instance of any subsystem
+- Each subsystem only should complete one command at a time
+- removes conflict (eg 2 seperate movements trying to occur at the same time)
+- periodic() shouldn't move motors because it runs over whatever else is happening
+- if a command uses a subsystem, it 'requires' it.
+- Default Command (eg move arm to resting position) runs when nothing else is happening.
