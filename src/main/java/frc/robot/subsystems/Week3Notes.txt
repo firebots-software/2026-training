@@ -1,0 +1,29 @@
+Week 3 Notes — Subsystems and CommandScheduler
+
+CommandScheduler:
+- Think of it like the robot’s manager. It runs every 20 milliseconds (50 times a second) making sure the robot knows what to do.
+- It listens for button presses, schedules commands, and runs them.
+- It also runs the periodic() method for all subsystems to keep things updated.
+- Makes sure that only one command controls a subsystem at a time so the robot doesn’t get confused.
+
+Subsystems:
+- These are like different parts of the robot — the arm, the drive train, the elevator, etc.
+- Each subsystem handles its own hardware like motors and sensors.
+- Other parts of the code can't directly mess with the hardware — they have to ask the subsystem to do it.
+- This keeps the code organized and prevents things from breaking.
+
+periodic():
+- This is like a little check-in that happens every 20ms for each subsystem.
+- You can use it to log stuff, check sensor values, or do quick updates.
+- It’s NOT where you control motors or move stuff. That’s the job of commands.
+- Think of it like background maintenance.
+
+Default Command:
+- A command that runs when no other command is using the subsystem.
+- Great for keeping things safe or in a good position, like holding an arm steady or keeping motors off.
+- This is set somewhere else in the code, not inside the subsystem itself.
+
+Key Takeaways:
+- Subsystems = the robot’s body parts. They know how to control their own hardware.
+- Commands = the tasks the robot does, like moving the arm or driving.
+- The CommandScheduler = the boss making sure tasks happen smoothly without conflicts.
