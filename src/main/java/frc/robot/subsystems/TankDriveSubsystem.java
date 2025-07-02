@@ -9,6 +9,62 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+
+import frc.robot.Constants;
+
 public class TankDriveSubsystem {
-    
+    private final TalonFX lMotor;
+    private final TalonFX rMotor;
+
+    public TankDriveSubsystem() {
+        lMotor = new TalonFX(0);
+        rMotor = new TalonFX(1);
+
+        TalonFXConfigurator lMotorConfigurator = lMotor.getConfigurator();
+        TalonFXConfigurator rMotorConfigurator = rMotor.getConfigurator();
+
+        CurrentLimitsConfigs cl = new CurrentLimitsConfigs().withSupplyCurrentLimit(6); //etc
+
+        lMotorConfigurator.apply(cl);
+        rMotorConfigurator.apply(cl);
+    }
+
+    private void move(String input, float speed) {
+        if (input.equals("clockwise")) {
+            lMotor.set(speed); //conveniently enough the talonfx class has a thing where you dont need a request (it does it for you)
+        }
+        if (input.equals("counterclockwise")) {
+            rMotor.set(speed);
+        }
+        if (input.equals("forward")) {
+            lMotor.set(speed);
+            rMotor.set(speed);
+        }
+    }
+
+    public void turnLeft(float speed) {
+        move("left", speed);
+    }
+
+    public void turnRight(float speed) {
+        move("right", speed);
+    }
+
+    public void moveForward(float speed) {
+        move("forward", speed);
+    }
+
+    public void moveBackward(float speed) {
+        move("forward", -speed);
+    }
+
+    public void brake() {
+        move("forward", 0);
+    }
 }
