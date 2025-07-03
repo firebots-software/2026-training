@@ -9,6 +9,50 @@
 
 package frc.robot.subsystems;
 
-public class TankDriveSubsystem {
-    
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class TankDriveSubsystem extends SubsystemBase {
+    private final TalonFX rightMotor;
+    private final TalonFX leftMotor;
+
+    // dutyCycleOut bc i think it'll be easier to control which side you want to turn.
+    // like if you want left, then make the left speed % less than the right speed
+    // also pretty sure i read somwhere that for tank drive, using this is easier for joystick control (?)
+    private final DutyCycleOut dutyRequest = new DutyCycleOut(0);
+
+    public TankDriveSubsystem() {
+        rightMotor = new TalonFX(1);
+        leftMotor = new TalonFX(2);
+
+        TalonFXConfigurator rightConfigurator = rightMotor.getConfigurator();
+        TalonFXConfigurator leftConfigurator = leftMotor.getConfigurator();
+
+
+        CurrentLimitsConfigs clc = 
+            new CurrentLimitsConfigs()
+                .withStatorCurrentLimitEnable(true)
+                .withStatorCurrentLimit(65)
+                .withSupplyCurrentLimitEnable(true)
+                .withSupplyCurrentLimit(30);
+        
+        rightConfigurator.apply(clc);
+        leftConfigurator.apply(clc);
+    }
+
+    // turn left: drive(60, 30) - my thinking
+    // easier to put in speed in whole # than deci
+    // also less error of putting invalid speed (ex.2.0 vs 200)
+    // no one stupid enough to put 200 speed -_-
+    public void drive(double rightSpeed, double leftSpeed) {
+        rightMotor.setControl(dutyRequest.withOutput(rightSpeed * 0.01));
+        leftMotor.setControl(dutyRequest.withOutput(leftSpeed * 0.01)); 
+    }
+
+    public void stop() {
+        drive(0,0);
+    }
 }
