@@ -54,7 +54,7 @@ public class TankDriveSubsystem extends SubsystemBase {
     rightMotor.setControl(dutyCycleRequest.withOutput(driveAmount));
   }
 
-  public void driveBothMotors(double leftDriveAmount, double rightDriveAmount){
+  public void driveBothMotors(double leftDriveAmount, double rightDriveAmount) {
     leftMotor.setControl(dutyCycleRequest.withOutput(leftDriveAmount));
     rightMotor.setControl(dutyCycleRequest.withOutput(rightDriveAmount));
   }
