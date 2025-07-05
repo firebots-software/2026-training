@@ -9,6 +9,39 @@
 
 package frc.robot.subsystems;
 
-public class TankDriveSubsystem {
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class TankDriveSubsystem extends SubsystemBase {
+    private final TalonFX leftMotor;
+    private final TalonFX rightMotor;
     
+    //I'm using DutyCycleOut because it allows us to control the motors as a percentage of how much voltage is available.
+    //Joysticks give valus in range from -1.0 to 1.0, which corresponds to the percent of the voltage applied to the motor. 
+    private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0.0);
+
+    public TankDriveSubsystem(){
+        leftMotor = new TalonFX(1);
+        rightMotor = new TalonFX(2);
+
+        TalonFXConfigurator leftConfigurator = leftMotor.getConfigurator();
+        TalonFXConfigurator rightConfigurator = rightMotor.getConfigurator();
+
+        CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs()
+        .withStatorCurrentLimitEnable(true)
+        .withStatorCurrentLimit(65)
+        .withSupplyCurrentLimitEnable(true)
+        .withSupplyCurrentLimit(30);
+
+        leftConfigurator.apply(currentLimits);
+        rightConfigurator.apply(currentLimits);
+    }
+    //leftSpeed and rightSpeed are changeable inputs. This way, you can just call for example "drive(0.5, -0.5)" to turn left
+    public void drive(double leftSpeed, double rightSpeed){
+        leftMotor.setControl(dutyCycleRequest.withOutput(leftSpeed));
+        rightMotor.setControl(dutyCycleRequest.withOutput(rightSpeed));
+    }
 }
