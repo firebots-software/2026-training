@@ -1,14 +1,46 @@
-// Instructions:
-// 1. create a branch off of this branch and title it firstname-lastname-week-4
-// 2. you are responsible for instantiating the two motors for this subsystem
-// 3. you are responsible for applying stator and supply current limits
-//    for each of the motors (recommended 65 Amp stator current limits & 30 Amp limit for supply)
-// 4. use the appropriate control mode for running the Tank Drive (and leave a comment for why you are using it)
-// Hint: besides defining the motors in the constructor, the main method that your Tank Drive
-// needs takes in input to drive the left and right motors each with a control request
-
 package frc.robot.subsystems;
 
-public class TankDriveSubsystem {
-    
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class TankDriveSubsystem extends SubsystemBase {
+
+  private final TalonFX leftDriveMotor;
+  private final TalonFX rightDriveMotor;
+
+  private final DutyCycleOut tankDriveControl = new DutyCycleOut(0.0);
+
+  public TankDriveSubsystem() {
+    leftDriveMotor = new TalonFX(1);
+    rightDriveMotor = new TalonFX(2);
+
+    CurrentLimitsConfigs currentLimitConfig = new CurrentLimitsConfigs()
+      .withStatorCurrentLimitEnable(true)
+      .withStatorCurrentLimit(65)
+      .withSupplyCurrentLimitEnable(true)
+      .withSupplyCurrentLimit(30);
+
+    leftDriveMotor.getConfigurator().apply(currentLimitConfig);
+    rightDriveMotor.getConfigurator().apply(currentLimitConfig);
+  }
+
+  public void tankDrive(double leftPower, double rightPower) {
+    leftDriveMotor.setControl(tankDriveControl.withOutput(leftPower));
+    rightDriveMotor.setControl(tankDriveControl.withOutput(rightPower));
+  }
+
+  public void resetEncoders() {
+    leftDriveMotor.setPosition(0.0);
+    rightDriveMotor.setPosition(0.0);
+  }
+
+  public double getLeftEncoder() {
+    return leftDriveMotor.getPosition().getValueAsDouble();
+  }
+
+  public double getRightEncoder() {
+    return rightDriveMotor.getPosition().getValueAsDouble();
+  }
 }
