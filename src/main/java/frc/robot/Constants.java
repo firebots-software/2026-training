@@ -25,4 +25,17 @@ public final class Constants {
     public static final double rotationsPerRadian =
       10; // 10 turns of the motor turns the arm 1 radian
   }
+
+  public static class TankDrive {
+    public static class PIDValues {
+      public static final double kP = 1000000.0;
+      public static final double kI = 0.0111111;
+      public static final double kD = 2922929299292920.0;
+    }
+    public static class CurrentLimits {
+      public static final double STATOR_CURRENT_LIMIT_AMPS = 65;
+      public static final double SUPPLY_CURRENT_LIMIT_AMPS = 30;
+    }
+  }
+
 }
