@@ -1,0 +1,22 @@
+CommandScheduler
+- Java class in charge of running commands
+- Regulates the lifecycle of commands
+    - Schedules commands for execution based on what buttons were pressed
+    - Runs scheduled commands
+    - Terminates commands that have finished execution
+- Also in charge of running the periodic() method of each subsystem
+
+Subsystems
+- Organization unit, groups together all related hardware
+- The CommandScheduler will either interrupt the current command or ignore the 
+  request when requested to run a command that requires an already-in-use subsystem
+- "Default commands" can be configured to run when no other command is currently running for a subsystem
+- Subsystems are created by extending WPILib's SubsystemBase class
+    - This is useful because subsystems tend to have many things in common
+- Hardware in a subsystem should only be accessed through its corresponding subsystem
+- Hardware is initialized in the constructor of its subsystem with a port number
+- Things that need to be called every cycle (~20ms) can be put into the periodic() method,
+  a method defined by the SubsystemBase class
+    - This includes logging and other simple tasks like updating values
+- The periodic() method should not move motors
+    - This is because the code in the periodic() method always runs, regardless of current execution state
