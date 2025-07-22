@@ -25,4 +25,10 @@ public final class Constants {
     public static final double rotationsPerRadian =
       10; // 10 turns of the motor turns the arm 1 radian
   }
+  public static class TankDriveConstants{
+    public static final int leftMotorID = 1;
+    public static final int rightMotorID = 2;
+    public static final int STATOR_CURRENT_LIMIT_AMPS = 65;
+    public static final int SUPPLY_CURRENT_LIMIT_AMPS = 30;
+  }
 }
