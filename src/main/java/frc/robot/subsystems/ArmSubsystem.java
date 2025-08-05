@@ -4,9 +4,13 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -14,7 +18,8 @@ public class ArmSubsystem extends SubsystemBase {
   private final TalonFX motor;
   private double targetRadians;
 
-  private final PositionVoltage positionRequest;
+private final MotionMagicVoltage motionMagicRequest;
+private final ArmFeedforward armff;
 
   public ArmSubsystem() {
     targetRadians = (3.14 / 2d);
@@ -24,18 +29,31 @@ public class ArmSubsystem extends SubsystemBase {
     slot0.kP = Constants.ArmConstants.kP;
     slot0.kI = Constants.ArmConstants.kI;
     slot0.kD = Constants.ArmConstants.kD;
-    motor.getConfigurator().apply(slot0);
+    CurrentLimitsConfigs clc = new CurrentLimitsConfigs()
+    .withStatorCurrentLimitEnable(true)
+    .withStatorCurrentLimit(Constants.STATOR_CURRENT_LIMIT_AMPS)
+    .withSupplyCurrentLimitEnable(true)
+    .withSupplyCurrentLimit(Constants.SUPPLY_CURRENT_LIMIT_AMPS);
 
-    positionRequest = new PositionVoltage(0).withSlot(0);
+    TalonFXConfigurator motorConfigurator= motor.getConfigurator();
+
+    motorConfigurator.apply(slot0);
+    motorConfigurator.apply(clc);
+    
+    armff = new ArmFeedforward(Constants.ArmConstants.kS, Constants.ArmConstants.kG, Constants.ArmConstants.kV, Constants.ArmConstants.kA);
+    motionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
   }
 
   public void setAngle(double armRadians) {
     targetRadians = armRadians;
+    motor.setControl(motionMagicRequest.withPosition(targetRadians * Constants.ArmConstants.rotationsPerRadian)
+    .withFeedForward(armff.calculate(targetRadians,0)));
   }
 
   public double getAngle() {
     return motor.getRotorPosition().getValueAsDouble() / Constants.ArmConstants.rotationsPerRadian;
   }
+
 
   public void zeroEncoder() {
     motor.setPosition(0.0);
@@ -51,7 +69,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    motor.setControl(positionRequest.withPosition(targetRadians * Constants.ArmConstants.rotationsPerRadian));
+    
     // This method will be called once per scheduler run
   }
 

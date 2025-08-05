@@ -32,9 +32,9 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         CurrentLimitsConfigs clcDrive = new CurrentLimitsConfigs()
                                         .withStatorCurrentLimitEnable(true)
-                                        .withStatorCurrentLimit(Constants.TankDriveConstants.STATOR_CURRENT_LIMIT_AMPS)
+                                        .withStatorCurrentLimit(Constants.STATOR_CURRENT_LIMIT_AMPS)
                                         .withSupplyCurrentLimitEnable(true)
-                                        .withSupplyCurrentLimit(Constants.TankDriveConstants.SUPPLY_CURRENT_LIMIT_AMPS);
+                                        .withSupplyCurrentLimit(Constants.SUPPLY_CURRENT_LIMIT_AMPS);
         leftDriveMotorConfigurator.apply(clcDrive);
         rightDriveMotorConfigurator.apply(clcDrive);
 

@@ -13,6 +13,8 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final int STATOR_CURRENT_LIMIT_AMPS = 65;
+  public static final int SUPPLY_CURRENT_LIMIT_AMPS = 30;
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
@@ -21,6 +23,13 @@ public final class Constants {
     public static final double kP = 1.0;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
+    public static final double kS = 0.0;
+    public static final double kG = 1.0;
+    public static final double kV = 2.0;
+    public static final double kA = 3.0;
+
+    public static final double MOTIONMAGIC_MAX_VELOCITY = 5; //meters per second
+    public static final double MOTIONMAGIC_MAX_ACCELERATION = 3;// meters per second squared
 
     public static final double rotationsPerRadian =
       10; // 10 turns of the motor turns the arm 1 radian
@@ -28,7 +37,5 @@ public final class Constants {
   public static class TankDriveConstants{
     public static final int leftMotorID = 1;
     public static final int rightMotorID = 2;
-    public static final int STATOR_CURRENT_LIMIT_AMPS = 65;
-    public static final int SUPPLY_CURRENT_LIMIT_AMPS = 30;
   }
 }
