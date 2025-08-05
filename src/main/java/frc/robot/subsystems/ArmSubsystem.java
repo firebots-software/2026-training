@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -36,9 +37,13 @@ private final ArmFeedforward armff;
     .withSupplyCurrentLimit(Constants.SUPPLY_CURRENT_LIMIT_AMPS);
 
     TalonFXConfigurator motorConfigurator= motor.getConfigurator();
+    MotionMagicConfigs mmConfigs = new MotionMagicConfigs()
+    .withMotionMagicCruiseVelocity(Constants.ArmConstants.MOTIONMAGIC_MAX_VELOCITY)
+    .withMotionMagicAcceleration(Constants.ArmConstants.MOTIONMAGIC_MAX_ACCELERATION);
 
     motorConfigurator.apply(slot0);
     motorConfigurator.apply(clc);
+    motorConfigurator.apply(mmConfigs);
     
     armff = new ArmFeedforward(Constants.ArmConstants.kS, Constants.ArmConstants.kG, Constants.ArmConstants.kV, Constants.ArmConstants.kA);
     motionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
