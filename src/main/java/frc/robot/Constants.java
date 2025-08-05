@@ -18,11 +18,19 @@ public final class Constants {
   }
 
   public static class ArmConstants {
-    public static final double kP = 1.0;
+    public static final double kS = 0.25;
+    public static final double kV = 0.12;
+    public static final double kA = 0.01;
+    public static final double kP = 4.8;
     public static final double kI = 0.0;
-    public static final double kD = 0.0;
+    public static final double kD = 0.1;
 
     public static final double rotationsPerRadian =
         10; // 10 turns of the motor turns the arm 1 radian
+  }
+
+  public static class MotionMagicConstants {
+    public static final double MOTIONMAGIC_MAX_VELOCITY = 80.0;
+    public static final double MOTIONMAGIC_MAX_ACCELERATION = 160.0;
   }
 }
