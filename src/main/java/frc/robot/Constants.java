@@ -16,4 +16,21 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static final class Arm{
+    public static final double kP = 2.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.1;
+    public static final double kV = 0.12;
+    public static final double kA = 0.1;
+
+   public static final double MOTIONMAGIC_MAX_VELOCITY = 50.0;
+   public static final double MOTIONMAGIC_MAX_ACCELERATION = 100.0;
+
+   public static final double STATOR_CURRENT_LIMIT_AMPS = 65.0; 
+   public static final double SUPPLY_CURRENT_LIMIT_AMPS = 30.0;
+  }
+
+
+
 }
