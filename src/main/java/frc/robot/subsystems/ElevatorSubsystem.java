@@ -87,10 +87,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPosition() {
-    return Math.abs(currentLevel - targetHeight) < tolerance;
+    return Math.abs(motor1.getPosition().getValueAsDouble() - targetHeight) < tolerance;
   }
 
   public void setPosition(float position) {
-
+    targetHeight = position;
+    motor1.setControl(controlRequest.withPosition(position));
+    motor2.setControl(motor1.getAppliedControl());
   }
 }
