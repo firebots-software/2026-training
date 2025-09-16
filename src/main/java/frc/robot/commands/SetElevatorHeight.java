@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ElevatorConstants.ElevatorPositions;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 
@@ -12,14 +13,14 @@ import frc.robot.subsystems.ExampleSubsystem;
 public class SetElevatorHeight extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem m_elevator;
-  private float position;
+  private ElevatorPositions position;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public SetElevatorHeight(ElevatorSubsystem elevator, float position) {
+  public SetElevatorHeight(ElevatorSubsystem elevator, ElevatorPositions position) {
     m_elevator = elevator;
     this.position = position;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -29,7 +30,7 @@ public class SetElevatorHeight extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_elevator.setPosition(position);
+    m_elevator.setPosition(position.getHeight());
   }
 
   // Called every time the scheduler runs while the command is scheduled.

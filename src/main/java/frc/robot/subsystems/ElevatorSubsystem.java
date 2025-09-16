@@ -22,6 +22,9 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ElevatorConstants.ElevatorPositions;
+import frc.robot.util.LoggedTalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -31,8 +34,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ElevatorSubsystem extends SubsystemBase {
   private static ElevatorSubsystem instance;
 
-  private TalonFX motor1;
-  private TalonFX motor2;
+  private LoggedTalonFX motor1;
+  private LoggedTalonFX motor2;
   public TalonFX master;
 
   private LinearFilter elevatorFilter;
@@ -40,8 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private boolean elevatorZeroed;
 
   private MotionMagicConfigs mmc;
-  private float currentLevel;
-  private float targetHeight;
+  private ElevatorPositions currentLevel;
   private CANrange distance; // Time of Flight (ToF) sensor
 
   private float tolerance;
@@ -50,7 +52,74 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final TorqueCurrentFOC torqueRequest = new TorqueCurrentFOC(0);
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
   /** Creates a new ExampleSubsystem. */
-  public ElevatorSubsystem() {}
+  public ElevatorSubsystem() {
+    motor1 =
+        new LoggedTalonFX(
+            "subsystems/Elevator/motor1",
+            ElevatorConstants.MOTOR1_PORT,
+            Constants.Swerve.WHICH_SWERVE_ROBOT.CANBUS_NAME);
+    motor2 =
+        new LoggedTalonFX(
+            "subsystems/Elevator/motor2",
+            ElevatorConstants.MOTOR2_PORT,
+            Constants.Swerve.WHICH_SWERVE_ROBOT.CANBUS_NAME);
+    currentLevel = ElevatorPositions.Intake;
+
+    // Set up motor followers and deal with inverted motors
+    Follower follower = new Follower(ElevatorConstants.MOTOR1_PORT, false);
+    motor2.setControl(follower);
+
+    Slot1Configs s1c =
+        new Slot1Configs()
+            .withKP(ElevatorConstants.S1C_KP)
+            .withKI(ElevatorConstants.S1C_KI)
+            .withKD(ElevatorConstants.S1C_KD)
+            .withKS(ElevatorConstants.S0C_KS)
+            .withKG(ElevatorConstants.S0C_KG)
+            .withKA(ElevatorConstants.S0C_KA)
+            .withKV(ElevatorConstants.S0C_KV)
+            .withGravityType(GravityTypeValue.Elevator_Static)
+            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    Slot0Configs s0c =
+        new Slot0Configs()
+            .withKP(ElevatorConstants.S0C_KP)
+            .withKI(ElevatorConstants.S0C_KI)
+            .withKD(ElevatorConstants.S0C_KD)
+            .withKS(ElevatorConstants.S0C_KS)
+            .withKG(ElevatorConstants.S0C_KG)
+            .withKA(ElevatorConstants.S0C_KA)
+            .withKV(ElevatorConstants.S0C_KV)
+            .withGravityType(GravityTypeValue.Elevator_Static)
+            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    motor1.updateCurrentLimits(
+        ElevatorConstants.STATOR_CURRENT_LIMIT, ElevatorConstants.SUPPLY_CURRENT_LIMIT);
+    motor2.updateCurrentLimits(
+        ElevatorConstants.STATOR_CURRENT_LIMIT, ElevatorConstants.SUPPLY_CURRENT_LIMIT);
+
+    TalonFXConfigurator m1Config = motor1.getConfigurator();
+    TalonFXConfigurator m2Config = motor2.getConfigurator();
+
+    m1Config.apply(s0c);
+    m2Config.apply(s0c);
+    m1Config.apply(s1c);
+    m2Config.apply(s1c);
+
+    MotorOutputConfigs moc = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
+
+    // Apply MotionMagic to motors
+    mmc = new MotionMagicConfigs();
+    mmc.MotionMagicCruiseVelocity = ElevatorConstants.MOTIONMAGIC_MAX_VELOCITY;
+    mmc.MotionMagicAcceleration = ElevatorConstants.MOTIONMAGIC_MAX_ACCELERATION;
+
+    m1Config.apply(mmc);
+    m2Config.apply(mmc);
+
+    m1Config.apply(moc);
+    m2Config.apply(moc);
+
+  }
 
   /**
    * Example command factory method.
@@ -87,12 +156,25 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPosition() {
-    return Math.abs(motor1.getPosition().getValueAsDouble() - targetHeight) < tolerance;
+    return Math.abs(currentLevel.getHeight()
+    * ElevatorConstants.CONVERSION_FACTOR_UP_DISTANCE_TO_ROTATIONS
+    / Constants.ElevatorConstants.CARRAIGE_UPDUCTION
+    - master.getPosition().getValueAsDouble())
+    < ElevatorConstants.SETPOINT_TOLERANCE;
   }
 
-  public void setPosition(float position) {
-    targetHeight = position;
-    motor1.setControl(controlRequest.withPosition(position));
-    motor2.setControl(motor1.getAppliedControl());
+  public void setPosition(double height) {
+    master.setControl(
+      controlRequest
+          .withPosition(
+              height
+                  * ElevatorConstants.CONVERSION_FACTOR_UP_DISTANCE_TO_ROTATIONS
+                  / ElevatorConstants.CARRAIGE_UPDUCTION)
+          .withSlot(0));
+  }
+
+  public void elevateTo(ElevatorPositions level) {
+    this.currentLevel = level;
+    this.setPosition(level.height);
   }
 }
