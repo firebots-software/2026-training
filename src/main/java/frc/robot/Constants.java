@@ -23,7 +23,7 @@ public final class Constants {
     public static final double kD = 0.0;
 
     public static final double rotationsPerRadian =
-      10; // 10 turns of the motor turns the arm 1 radian
+        10; // 10 turns of the motor turns the arm 1 radian
   }
 
   public static class ElevatorConstants {

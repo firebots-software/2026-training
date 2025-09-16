@@ -4,27 +4,17 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANrange;
-import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import dev.doglog.DogLog;
-import edu.wpi.first.math.filter.LinearFilter;
-import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.util.LoggedTalonFX;
 
-public class ExampleSubsystem extends SubsystemBase {
+public class ElevatorSubsystem extends SubsystemBase {
   LoggedTalonFX motor1;
   LoggedTalonFX motor2;
   LoggedTalonFX master;
@@ -34,7 +24,7 @@ public class ExampleSubsystem extends SubsystemBase {
   private double targetHeight;
   private double tolerance = 3.0;
 
-  public ExampleSubsystem() {
+  public ElevatorSubsystem() {
     motor1 = new LoggedTalonFX(1);
     motor2 = new LoggedTalonFX(2);
 
@@ -42,15 +32,15 @@ public class ExampleSubsystem extends SubsystemBase {
     Follower follower = new Follower(1, false);
     motor2.setControl(follower);
 
-    Slot0Configs s0c = new Slot0Configs()
-        .withKP(1.0)
-        .withKI(1.0)
-        .withKD(1.0);
+    Slot0Configs s0c = new Slot0Configs().withKP(1.0).withKI(1.0).withKD(1.0);
 
     motor1.updateCurrentLimits(1.0, 1.0);
     motor2.updateCurrentLimits(1.0, 1.0);
 
-    MotionMagicConfigs mmc = new MotionMagicConfigs().withMotionMagicAcceleration(ElevatorConstants.MAX_ACCELERATION).withMotionMagicCruiseVelocity(ElevatorConstants.MAX_VELOCITY);
+    MotionMagicConfigs mmc =
+        new MotionMagicConfigs()
+            .withMotionMagicAcceleration(ElevatorConstants.MAX_ACCELERATION)
+            .withMotionMagicCruiseVelocity(ElevatorConstants.MAX_VELOCITY);
 
     TalonFXConfigurator m1Config = motor1.getConfigurator();
 
@@ -58,13 +48,13 @@ public class ExampleSubsystem extends SubsystemBase {
     m1Config.apply(mmc);
   }
 
-  public double setHeight(double height) {
+  public void setHeight(double height) {
     targetHeight = height;
     master.setControl(request.withPosition(targetHeight));
   }
 
   public double getCurrentHeight() {
-    return master.getPosition().getValueAsDouble(); 
+    return master.getPosition().getValueAsDouble();
   }
 
   public double getTargetHeight() {

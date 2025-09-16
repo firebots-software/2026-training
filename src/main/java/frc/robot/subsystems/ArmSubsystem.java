@@ -22,8 +22,7 @@ public class ArmSubsystem extends SubsystemBase {
     slot0.kD = Constants.ArmConstants.kD; // can be tuned separately
     motor.getConfigurator().apply(slot0);
 
-    positionRequest = new PositionVoltage(0)
-        .withSlot(0);
+    positionRequest = new PositionVoltage(0).withSlot(0);
   }
 
   public void setAngle(double armRadians) {
@@ -48,7 +47,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    motor.setControl(positionRequest.withPosition(targetRadians * Constants.ArmConstants.rotationsPerRadian));
+    motor.setControl(
+        positionRequest.withPosition(targetRadians * Constants.ArmConstants.rotationsPerRadian));
   }
 
   @Override
