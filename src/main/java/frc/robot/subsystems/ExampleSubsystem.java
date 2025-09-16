@@ -6,38 +6,85 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANrange;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+import dev.doglog.DogLog;
+import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
 
 public class ExampleSubsystem extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
-  public ExampleSubsystem() {}
+  LoggedTalonFX motor1;
+  LoggedTalonFX motor2;
+  LoggedTalonFX master;
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
+  MotionMagicVoltage request = new MotionMagicVoltage(null);
+
+  private double targetHeight;
+  private double tolerance = 3.0;
+
+  public ExampleSubsystem() {
+    motor1 = new LoggedTalonFX(1);
+    motor2 = new LoggedTalonFX(2);
+
+    master = motor1;
+    Follower follower = new Follower(1, false);
+    motor2.setControl(follower);
+
+    Slot0Configs s0c = new Slot0Configs()
+        .withKP(1.0)
+        .withKI(1.0)
+        .withKD(1.0);
+
+    motor1.updateCurrentLimits(1.0, 1.0);
+    motor2.updateCurrentLimits(1.0, 1.0);
+
+    MotionMagicConfigs mmc = new MotionMagicConfigs().withMotionMagicAcceleration(ElevatorConstants.MAX_ACCELERATION).withMotionMagicCruiseVelocity(ElevatorConstants.MAX_VELOCITY);
+
+    TalonFXConfigurator m1Config = motor1.getConfigurator();
+
+    m1Config.apply(s0c);
+    m1Config.apply(mmc);
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
+  public double setHeight(double height) {
+    targetHeight = height;
+    master.setControl(request.withPosition(height));
+  }
+
+  public double getCurrentHeight() {
+    return master.getPosition().getValueAsDouble(); 
+  }
+
+  public double getErrorDist() {
+    return Math.abs(targetHeight - getCurrentHeight());
+  }
+
+  public boolean isAtTargetHeight() {
+    return getErrorDist() <= tolerance;
+  }
+
+  public void zeroElevator() {
+    master.setPosition(0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    DogLog.log("Current angle", getCurrentHeight());
+    DogLog.log("Is at target", isAtTargetHeight());
   }
 
   @Override

@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -21,12 +17,13 @@ public class ArmSubsystem extends SubsystemBase {
 
     motor = new TalonFX(1);
     Slot0Configs slot0 = new Slot0Configs();
-    slot0.kP = Constants.ArmConstants.kP;
-    slot0.kI = Constants.ArmConstants.kI;
-    slot0.kD = Constants.ArmConstants.kD;
+    slot0.kP = Constants.ArmConstants.kP; // can be tuned separately
+    slot0.kI = Constants.ArmConstants.kI; // can be tuned separately
+    slot0.kD = Constants.ArmConstants.kD; // can be tuned separately
     motor.getConfigurator().apply(slot0);
 
-    positionRequest = new PositionVoltage(0).withSlot(0);
+    positionRequest = new PositionVoltage(0)
+        .withSlot(0);
   }
 
   public void setAngle(double armRadians) {
@@ -52,11 +49,8 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     motor.setControl(positionRequest.withPosition(targetRadians * Constants.ArmConstants.rotationsPerRadian));
-    // This method will be called once per scheduler run
   }
 
   @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
+  public void simulationPeriodic() {}
 }
