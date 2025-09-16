@@ -21,7 +21,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -61,11 +60,15 @@ public class ExampleSubsystem extends SubsystemBase {
 
   public double setHeight(double height) {
     targetHeight = height;
-    master.setControl(request.withPosition(height));
+    master.setControl(request.withPosition(targetHeight));
   }
 
   public double getCurrentHeight() {
     return master.getPosition().getValueAsDouble(); 
+  }
+
+  public double getTargetHeight() {
+    return targetHeight;
   }
 
   public double getErrorDist() {
