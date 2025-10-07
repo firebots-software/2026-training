@@ -21,9 +21,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ElevatorSubsystem m_exampleSubsystem = new ElevatorSubsystem();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
