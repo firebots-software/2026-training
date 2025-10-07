@@ -51,7 +51,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    motor.setControl(positionRequest.withPosition(targetRadians * Constants.ArmConstants.rotationsPerRadian));
+    motor.setControl(
+        positionRequest.withPosition(targetRadians * Constants.ArmConstants.rotationsPerRadian));
     // This method will be called once per scheduler run
   }
 
