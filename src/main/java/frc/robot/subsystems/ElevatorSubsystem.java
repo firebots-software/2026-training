@@ -18,18 +18,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
-import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ElevatorConstants.ElevatorPositions;
 import frc.robot.util.LoggedTalonFX;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-
-
 
 public class ElevatorSubsystem extends SubsystemBase {
   private static ElevatorSubsystem instance;
@@ -51,6 +46,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final MotionMagicVoltage controlRequest = new MotionMagicVoltage(0);
   private final TorqueCurrentFOC torqueRequest = new TorqueCurrentFOC(0);
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
+
   /** Creates a new ExampleSubsystem. */
   public ElevatorSubsystem() {
     motor1 =
@@ -118,7 +114,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     m1Config.apply(moc);
     m2Config.apply(moc);
-
   }
 
   /**
@@ -156,21 +151,22 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPosition() {
-    return Math.abs(currentLevel.getHeight()
-    * ElevatorConstants.CONVERSION_FACTOR_UP_DISTANCE_TO_ROTATIONS
-    / Constants.ElevatorConstants.CARRAIGE_UPDUCTION
-    - master.getPosition().getValueAsDouble())
-    < ElevatorConstants.SETPOINT_TOLERANCE;
+    return Math.abs(
+            currentLevel.getHeight()
+                    * ElevatorConstants.CONVERSION_FACTOR_UP_DISTANCE_TO_ROTATIONS
+                    / Constants.ElevatorConstants.CARRAIGE_UPDUCTION
+                - master.getPosition().getValueAsDouble())
+        < ElevatorConstants.SETPOINT_TOLERANCE;
   }
 
   public void setPosition(double height) {
     master.setControl(
-      controlRequest
-          .withPosition(
-              height
-                  * ElevatorConstants.CONVERSION_FACTOR_UP_DISTANCE_TO_ROTATIONS
-                  / ElevatorConstants.CARRAIGE_UPDUCTION)
-          .withSlot(0));
+        controlRequest
+            .withPosition(
+                height
+                    * ElevatorConstants.CONVERSION_FACTOR_UP_DISTANCE_TO_ROTATIONS
+                    / ElevatorConstants.CARRAIGE_UPDUCTION)
+            .withSlot(0));
   }
 
   public void elevateTo(ElevatorPositions level) {
