@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.ElevatorSubsystem;
 
@@ -20,9 +19,6 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ElevatorSubsystem m_exampleSubsystem = new ElevatorSubsystem();
-
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
